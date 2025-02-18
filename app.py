@@ -25,6 +25,14 @@ def handle_connect():
         'server': current_server
     })
 
+
+@socketio.on('set_server')
+def set_server(data):
+    """ Manually set who starts serving """
+    global current_server
+    current_server = data.get('player', 1)  # Default to Player 1
+    emit('score_update', {'player_1': score_player_1, 'player_2': score_player_2, 'server': current_server}, broadcast=True)
+
 @socketio.on('increment_score')
 def handle_increment(data):
     global score_player_1, score_player_2, current_server
@@ -65,6 +73,8 @@ def handle_clear_score():
     score_player_1 = 0  # Reset player 1's score
     score_player_2 = 0  # Reset player 2's score
     current_server = 1
+
+
 
     # Broadcast updated scores to all connected clients
     emit('score_update', {'player_1': score_player_1, 'player_2': score_player_2, 'server': current_server}, broadcast=True)

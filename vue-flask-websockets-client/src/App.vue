@@ -1,6 +1,14 @@
 <template>
   <div id="app" class="bg-gray-900 text-white flex flex-col items-center justify-center h-screen w-screen">
     <h1 class="text-6xl font-bold mb-6">🏓 Ping Pong Scoreboard</h1>
+        <!-- Pick Who Starts Serving -->
+        <div class="mb-4 flex gap-4 text-2xl">
+      <span>Who serves first?</span>
+      <select v-model="selectedServer" @change="setInitialServer" class="px-4 py-2 bg-gray-700 text-white rounded-lg">
+        <option :value="1">Player 1</option>
+        <option :value="2">Player 2</option>
+      </select>
+    </div>
 
     <div class="flex justify-center w-full h-3/4 items-center gap-20">
       <!-- Player 1 -->
@@ -46,6 +54,8 @@ export default {
       scorePlayer1: 0,
       scorePlayer2: 0,
       server: 1,  // Track the current server
+      selectedServer: 1,  // Default selected server
+
 
     };
   },
@@ -57,11 +67,16 @@ export default {
     this.socket.on('score_update', (data) => {
       this.scorePlayer1 = data.player_1;
       this.scorePlayer2 = data.player_2;
-      this.server = data.server;  // Track the current server
+      this.server = data.server;
+      this.selectedServer = data.server;  // Keep dropdown in sync!
+
 
     });
   },
   methods: {
+    setInitialServer() {
+      this.socket.emit('set_server', { player: this.selectedServer });
+    },
     incrementScorePlayer1() {
       this.socket.emit('increment_score', { player: 1 });
     },
