@@ -55,6 +55,7 @@ export default {
       scorePlayer2: 0,
       server: 1,  // Track the current server
       selectedServer: 1,  // Default selected server
+      beepSound: new Audio('/beep.wav')  // Load the beep sound
 
 
     };
@@ -65,13 +66,21 @@ export default {
     
     // Listen for score updates from Flask server
     this.socket.on('score_update', (data) => {
+      // Store the old server before updating
+      const previousServer = this.server;  
+
+      // Update scores and server
       this.scorePlayer1 = data.player_1;
       this.scorePlayer2 = data.player_2;
       this.server = data.server;
       this.selectedServer = data.server;  // Keep dropdown in sync!
 
-
+      // Now compare previousServer with new server value
+      if (previousServer !== data.server) {
+        this.playBeep();  // Play beep sound when service changes
+      }
     });
+
   },
   methods: {
     setInitialServer() {
@@ -91,6 +100,11 @@ export default {
     },
     clearScore() {
       this.socket.emit('clear_score');
+    },
+    playBeep() {
+      this.beepSound.currentTime = 0; // Reset to start in case it's still playing
+      this.beepSound.play();
+      
     }
   }
 };
