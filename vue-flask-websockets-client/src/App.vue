@@ -1,5 +1,5 @@
 <template>
-  <div id="app" class="bg-gray-900 text-white flex flex-col items-center justify-center h-screen w-screen">
+  <div id="app" class="bg-gray-900 text-white flex flex-col items-center justify-center min-h-screen py-10 w-screen">
     <h1 class="text-6xl font-bold mb-6">🏓 Ping Pong Scoreboard</h1>
 
     <!-- Pick player names -->
