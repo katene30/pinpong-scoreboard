@@ -1,8 +1,21 @@
 <template>
   <div id="app">
-    <h1>Score: {{ score }}</h1>
-    <button @click="incrementScore">Increment</button>
-    <button @click="decrementScore">Decrement</button>
+    <h1>Player 1 Score: {{ scorePlayer1 }}</h1>
+    <h1>Player 2 Score: {{ scorePlayer2 }}</h1>
+
+    <div>
+      <button @click="incrementScorePlayer1">Increment Player 1</button>
+      <button @click="decrementScorePlayer1">Decrement Player 1</button>
+    </div>
+
+    <div>
+      <button @click="incrementScorePlayer2">Increment Player 2</button>
+      <button @click="decrementScorePlayer2">Decrement Player 2</button>
+    </div>
+
+    <div>
+      <button @click="clearScore">Clear Scores</button>
+    </div>
   </div>
 </template>
 
@@ -13,7 +26,8 @@ export default {
   data() {
     return {
       socket: null,
-      score: 0
+      scorePlayer1: 0,
+      scorePlayer2: 0
     };
   },
   created() {
@@ -22,15 +36,25 @@ export default {
     
     // Listen for score updates from Flask server
     this.socket.on('score_update', (data) => {
-      this.score = data.score;
+      this.scorePlayer1 = data.player_1;
+      this.scorePlayer2 = data.player_2;
     });
   },
   methods: {
-    incrementScore() {
-      this.socket.emit('increment_score');
+    incrementScorePlayer1() {
+      this.socket.emit('increment_score', { player: 1 });
     },
-    decrementScore() {
-      this.socket.emit('decrement_score');
+    decrementScorePlayer1() {
+      this.socket.emit('decrement_score', { player: 1 });
+    },
+    incrementScorePlayer2() {
+      this.socket.emit('increment_score', { player: 2 });
+    },
+    decrementScorePlayer2() {
+      this.socket.emit('decrement_score', { player: 2 });
+    },
+    clearScore() {
+      this.socket.emit('clear_score');
     }
   }
 };
