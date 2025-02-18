@@ -1,8 +1,18 @@
 <template>
   <div id="app" class="bg-gray-900 text-white flex flex-col items-center justify-center h-screen w-screen">
     <h1 class="text-6xl font-bold mb-6">🏓 Ping Pong Scoreboard</h1>
-        <!-- Pick Who Starts Serving -->
-        <div class="mb-4 flex gap-4 text-2xl">
+
+    <!-- Pick player names -->
+    <div class="mb-4 flex gap-4 text-2xl">
+      <span>Player Names:</span>
+      <input v-model="player1Name" placeholder="Enter Player 1 Name" class="px-4 py-2 bg-gray-700 text-white rounded-lg">
+      <input v-model="player2Name" placeholder="Enter Player 2 Name" class="px-4 py-2 bg-gray-700 text-white rounded-lg">
+    </div>
+
+    <div>NAMES {{ player1Name }} & {{ player2Name }}</div>
+
+    <!-- Pick Who Starts Serving -->
+    <div class="mb-4 flex gap-4 text-2xl">
       <span>Who serves first?</span>
       <select v-model="selectedServer" @change="setInitialServer" class="px-4 py-2 bg-gray-700 text-white rounded-lg">
         <option :value="1">Player 1</option>
@@ -51,6 +61,8 @@ export default {
   data() {
     return {
       socket: null,
+      player1Name: "Player 1",
+      player2Name: "Player 2",
       scorePlayer1: 0,
       scorePlayer2: 0,
       server: 1,  // Track the current server
@@ -63,6 +75,12 @@ export default {
   created() {
     // Connect to Flask WebSocket server
     this.socket = io('http://10.0.0.14:5000');
+
+    // Listen for name updates
+    this.socket.on('name_update', (data) => {
+      this.player1Name = data.player1;
+      this.player2Name = data.player2;
+    });
     
     // Listen for score updates from Flask server
     this.socket.on('score_update', (data) => {
@@ -74,6 +92,12 @@ export default {
       this.scorePlayer2 = data.player_2;
       this.server = data.server;
       this.selectedServer = data.server;  // Keep dropdown in sync!
+
+      // Send player names along with scores
+      this.socket.emit('update_names', {
+        player1: this.player1Name,
+        player2: this.player2Name
+      });
 
       // Now compare previousServer with new server value
       if (previousServer !== data.server) {
@@ -105,6 +129,20 @@ export default {
       this.beepSound.currentTime = 0; // Reset to start in case it's still playing
       this.beepSound.play();
       
+    }
+  },
+  watch: {
+    player1Name(newName) {
+      clearTimeout(this.nameUpdateTimeout);
+      this.nameUpdateTimeout = setTimeout(() => {
+        this.socket.emit('update_names', { player1: newName, player2: this.player2Name });
+      }, 500); // Wait 500ms before sending update
+    },
+    player2Name(newName) {
+      clearTimeout(this.nameUpdateTimeout);
+      this.nameUpdateTimeout = setTimeout(() => {
+        this.socket.emit('update_names', { player1: this.player1Name, player2: newName });
+      }, 500); // Wait 500ms before sending update
     }
   }
 };

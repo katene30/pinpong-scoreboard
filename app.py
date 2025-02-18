@@ -12,6 +12,9 @@ score_player_2 = 0
 
 current_server = 1
 
+player_names = {1: "Player 1", 2: "Player 2"}
+
+
 @app.route('/')
 def index():
     return "Flask WebSocket Backend Running"
@@ -25,6 +28,15 @@ def handle_connect():
         'server': current_server
     })
 
+@socketio.on('update_names')
+def update_names(data):
+    player_names[1] = data.get("player1", "Player 1")
+    player_names[2] = data.get("player2", "Player 2")
+
+    emit('name_update', {
+        "player1": player_names[1],
+        "player2": player_names[2]
+    }, broadcast=True)
 
 @socketio.on('set_server')
 def set_server(data):
