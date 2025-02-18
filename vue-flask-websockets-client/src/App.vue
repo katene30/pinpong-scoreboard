@@ -49,7 +49,7 @@ export default {
   },
   created() {
     // Connect to Flask WebSocket server
-    this.socket = io('http://localhost:5000');
+    this.socket = io('http://10.0.0.14:5000');
     
     // Listen for score updates from Flask server
     this.socket.on('score_update', (data) => {
