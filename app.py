@@ -28,6 +28,11 @@ def handle_connect():
         'server': current_server
     })
 
+    emit('name_update', {
+        "player1": player_names[1],
+        "player2": player_names[2]
+    })
+
 @socketio.on('update_names')
 def update_names(data):
     player_names[1] = data.get("player1", "Player 1")

@@ -91,13 +91,7 @@ export default {
       this.scorePlayer1 = data.player_1;
       this.scorePlayer2 = data.player_2;
       this.server = data.server;
-      this.selectedServer = data.server;  // Keep dropdown in sync!
-
-      // Send player names along with scores
-      this.socket.emit('update_names', {
-        player1: this.player1Name,
-        player2: this.player2Name
-      });
+      this.selectedServer = data.server;
 
       // Now compare previousServer with new server value
       if (previousServer !== data.server) {
@@ -125,24 +119,41 @@ export default {
     clearScore() {
       this.socket.emit('clear_score');
     },
+
     playBeep() {
+      if (document.hidden) return; // Don't play if the tab is inactive
+
       this.beepSound.currentTime = 0; // Reset to start in case it's still playing
-      this.beepSound.play();
-      
+
+      this.beepSound.play().catch((error) => {
+        console.warn("Audio play blocked, waiting for user interaction", error);
+        document.addEventListener("click", this.unlockAudio, { once: true });
+        document.addEventListener("touchstart", this.unlockAudio, { once: true });
+      });
+    },
+
+    unlockAudio() {
+      this.beepSound.play().catch(() => {});
+      document.removeEventListener("click", this.unlockAudio);
+      document.removeEventListener("touchstart", this.unlockAudio);
     }
   },
   watch: {
-    player1Name(newName) {
-      clearTimeout(this.nameUpdateTimeout);
-      this.nameUpdateTimeout = setTimeout(() => {
-        this.socket.emit('update_names', { player1: newName, player2: this.player2Name });
-      }, 500); // Wait 500ms before sending update
+    player1Name(newName, oldName) {
+      if (newName !== oldName) {
+        clearTimeout(this.nameUpdateTimeout);
+        this.nameUpdateTimeout = setTimeout(() => {
+          this.socket.emit('update_names', { player1: newName, player2: this.player2Name });
+        }, 500);
+      }
     },
-    player2Name(newName) {
-      clearTimeout(this.nameUpdateTimeout);
-      this.nameUpdateTimeout = setTimeout(() => {
-        this.socket.emit('update_names', { player1: this.player1Name, player2: newName });
-      }, 500); // Wait 500ms before sending update
+    player2Name(newName, oldName) {
+      if (newName !== oldName) {
+        clearTimeout(this.nameUpdateTimeout);
+        this.nameUpdateTimeout = setTimeout(() => {
+          this.socket.emit('update_names', { player1: this.player1Name, player2: newName });
+        }, 500);
+      }
     }
   }
 };
