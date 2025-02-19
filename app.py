@@ -91,10 +91,19 @@ def handle_clear_score():
     score_player_2 = 0  # Reset player 2's score
     current_server = 1
 
-
-
     # Broadcast updated scores to all connected clients
     emit('score_update', {'player_1': score_player_1, 'player_2': score_player_2, 'server': current_server}, broadcast=True)
+
+@socketio.on('clear_names')
+def handle_clear_names():
+    global player_names
+    player_names = {1: "Player 1", 2: "Player 2"}
+
+    # Broadcast updated names to all connected clients
+    emit('name_update', {
+        "player1": player_names[1],
+        "player2": player_names[2]
+    }, broadcast=True)
     
 
 if __name__ == '__main__':

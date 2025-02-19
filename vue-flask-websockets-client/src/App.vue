@@ -49,6 +49,12 @@
       <button @click="clearScore"
               class="px-12 py-6 bg-yellow-500 hover:bg-yellow-600 text-4xl font-bold rounded-lg">Clear Scores</button>
     </div>
+
+    <!--  Button -->
+    <div class="mt-8 text-4xl font-semibold">
+      <button @click="clearNames"
+              class="px-12 py-6 bg-yellow-500 hover:bg-yellow-600 text-4xl font-bold rounded-lg">Clear Names</button>
+    </div>
   </div>
 </template>
 
@@ -116,6 +122,10 @@ export default {
     },
     clearScore() {
       this.socket.emit('clear_score');
+    },
+
+    clearNames() {
+      this.socket.emit('clear_names');
     },
 
     playBeep() {
