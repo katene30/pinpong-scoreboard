@@ -62,19 +62,21 @@ def set_server(data):
 def update_game_state():
     global game_state, service_interval, score_player_1, score_player_2
 
+    # Check if both players are at or above game_point
     if score_player_1 >= game_point and score_player_2 >= game_point:
         game_state = "deuce"
         service_interval = 2
     else:
-        service_interval = 5
+        game_state = "active"  # Ensure it reverts back from deuce if necessary
+        service_interval = 5  # Reset service interval
 
+    # Determine if someone has won
     if game_state == "deuce":
         if abs(score_player_1 - score_player_2) >= 2:
             game_state = "win"
     elif max(score_player_1, score_player_2) >= winning_score:
         game_state = "win"
-    else:
-        game_state = "active"
+
 
 @socketio.on('increment_score')
 def handle_increment(data):
@@ -108,7 +110,6 @@ def handle_increment(data):
 @socketio.on('decrement_score')
 def handle_decrement(data):
     global score_player_1, score_player_2, current_server
-    print("Game State: ",game_state)
     player = data.get('player')  # Expecting 'player' key to be sent with '1' or '2'
 
     if player == 1:
@@ -118,7 +119,7 @@ def handle_decrement(data):
 
     total_score = score_player_1 + score_player_2
 
-    check_game_state()
+    update_game_state()
 
     if total_score % service_interval == 0:
         current_server = 1 if current_server == 2 else 2
@@ -138,8 +139,15 @@ def handle_clear_score():
     score_player_2 = 0  # Reset player 2's score
     current_server = 1
 
+    update_game_state()
+
     # Broadcast updated scores to all connected clients
     emit('score_update', {'player_1': score_player_1, 'player_2': score_player_2, 'server': current_server}, broadcast=True)
+
+    emit('game_state_update', {
+        'gameState': game_state,
+        'serviceInterval': service_interval
+    }, broadcast=True)
 
 @socketio.on('clear_names')
 def handle_clear_names():

@@ -19,6 +19,7 @@
     </div>
 
     <h2 v-if="gameState === 'deuce'" class="text-6xl font-bold text-white animate-pulse">🔥 DEUCE 🔥</h2>
+    <h2 v-if="gameState === 'win'" class="text-6xl font-bold text-white animate-pulse uppercase">{{winnerName}} WINS!</h2>
 
     <div class="flex justify-center w-full h-3/4 items-center gap-20">
       <!-- Player 1 -->
@@ -113,6 +114,15 @@ export default {
 
 
   },
+  computed: {
+    winnerName() {
+        if (this.gameState === "win") {
+          return this.scorePlayer1 > this.scorePlayer2 ? this.player1Name : this.player2Name;
+        }
+        return "";
+      }
+  },
+
   methods: {
     setInitialServer() {
       this.socket.emit('set_server', { player: this.selectedServer });
