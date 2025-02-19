@@ -18,6 +18,8 @@
       </select>
     </div>
 
+    <h2 v-if="gameState === 'deuce'" class="text-6xl font-bold text-white animate-pulse">🔥 DEUCE 🔥</h2>
+
     <div class="flex justify-center w-full h-3/4 items-center gap-20">
       <!-- Player 1 -->
       <div class="text-center flex flex-col items-center w-1/3 p-6 rounded-xl bg-gray-800" :class="{ 'border-8 border-yellow-500 shadow-xl': server === 1  }">
@@ -71,9 +73,11 @@ export default {
       scorePlayer2: 0,
       server: 1,  // Track the current server
       selectedServer: 1,  // Default selected server
-      beepSound: new Audio('/beep.wav')  // Load the beep sound
-
-
+      beepSound: new Audio('/beep.wav'),  // Load the beep sound
+      gameState: "active",
+      winningScore: 21,
+      gamePoint: this.winningScore - 1,
+      serviceInterval: 5,
     };
   },
   created() {
@@ -101,6 +105,12 @@ export default {
         this.playBeep();  // Play beep sound when service changes
       }
     });
+
+    this.socket.on("game_state_update", (data) => {
+      this.gameState = data.gameState;
+      this.serviceInterval = data.serviceInterval;
+    });
+
 
   },
   methods: {
