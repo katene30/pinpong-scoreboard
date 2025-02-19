@@ -95,7 +95,6 @@ export default {
       this.scorePlayer1 = data.player_1;
       this.scorePlayer2 = data.player_2;
       this.server = data.server;
-      this.selectedServer = data.server;
 
       // Now compare previousServer with new server value
       if (previousServer !== data.server) {
