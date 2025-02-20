@@ -60,7 +60,9 @@ def set_server(data):
     emit('score_update', {'player_1': score_player_1, 'player_2': score_player_2, 'server': current_server}, broadcast=True)
 
 def update_game_state():
-    global game_state, service_interval, score_player_1, score_player_2
+    global game_state, game_point, service_interval, score_player_1, score_player_2
+
+    game_point = winning_score - 1
 
     # Check if both players are at or above game_point
     if score_player_1 >= game_point and score_player_2 >= game_point:
@@ -80,7 +82,7 @@ def update_game_state():
 
 @socketio.on('increment_score')
 def handle_increment(data):
-    global score_player_1, score_player_2, current_server, game_point, service_interval, game_state
+    global score_player_1, score_player_2, current_server, service_interval, game_state
     player = data.get('player')  # Expecting 'player' key to be sent with '1' or '2'
     
 
@@ -160,6 +162,18 @@ def handle_clear_names():
         "player2": player_names[2]
     }, broadcast=True)
     
+@socketio.on('update_winning_score')
+def update_winning_score(data):
+    global winning_score
+    winning_score = data['winningScore']
+    socketio.emit('game_state_update', {'winningScore': winning_score, 'serviceInterval': service_interval, 'gameState': game_state})
+
+@socketio.on('update_service_interval')
+def update_service_interval(data):
+    global service_interval
+    service_interval = data['serviceInterval']
+    socketio.emit('game_state_update', {'winningScore': winning_score, 'serviceInterval': service_interval, 'gameState': game_state})
+
 
 if __name__ == '__main__':
     socketio.run(app, host='0.0.0.0', port=5000, debug=True)

@@ -2,6 +2,20 @@
   <div id="app" class="bg-gray-900 text-white flex flex-col items-center justify-center min-h-screen py-10 w-screen">
     <h1 class="text-6xl font-bold mb-6">🏓 Ping Pong Scoreboard</h1>
 
+    <!-- Game Settings -->
+    <div class="mb-4 flex gap-4 text-2xl">
+      <span>Winning Score:</span>
+      <input type="number" v-model="winningScore" @change="updateWinningScore" min="1"
+            class="px-4 py-2 bg-gray-700 text-white rounded-lg w-20">
+    </div>
+
+    <div class="mb-4 flex gap-4 text-2xl">
+      <span>Service Interval:</span>
+      <input type="number" v-model="serviceInterval" @change="updateServiceInterval" min="1"
+            class="px-4 py-2 bg-gray-700 text-white rounded-lg w-20">
+    </div>
+
+
     <!-- Pick player names -->
     <div class="mb-4 flex gap-4 text-2xl">
       <span>Player Names:</span>
@@ -110,6 +124,8 @@ export default {
     this.socket.on("game_state_update", (data) => {
       this.gameState = data.gameState;
       this.serviceInterval = data.serviceInterval;
+      this.winningScore = data.winningScore;
+      this.serviceInterval = data.serviceInterval;
     });
 
 
@@ -145,6 +161,14 @@ export default {
 
     clearNames() {
       this.socket.emit('clear_names');
+    },
+
+    updateWinningScore() {
+      this.socket.emit('update_winning_score', { winningScore: this.winningScore });
+    },
+
+    updateServiceInterval() {
+      this.socket.emit('update_service_interval', { serviceInterval: this.serviceInterval });
     },
 
     playBeep() {
