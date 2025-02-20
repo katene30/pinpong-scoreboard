@@ -67,10 +67,10 @@ def update_game_state():
     # Check if both players are at or above game_point
     if score_player_1 >= game_point and score_player_2 >= game_point:
         game_state = "deuce"
-        service_interval = 2
+
+        service_interval = 1 if winning_score <= 15 else 2 
     else:
-        game_state = "active"  # Ensure it reverts back from deuce if necessary
-        service_interval = 5  # Reset service interval
+        game_state = "active"
 
     # Determine if someone has won
     if game_state == "deuce":

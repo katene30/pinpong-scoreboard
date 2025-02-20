@@ -125,6 +125,11 @@ export default {
       this.gameState = data.gameState;
       this.serviceInterval = data.serviceInterval;
       this.winningScore = data.winningScore;
+
+      // Only override serviceInterval if the game is in deuce
+      if (this.gameState === "deuce") {
+        this.serviceInterval = data.serviceInterval;
+      }
     });
 
 
