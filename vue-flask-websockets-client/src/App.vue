@@ -32,12 +32,12 @@
       </select>
     </div>
 
-    <h2 v-if="gameState === 'deuce'" class="text-6xl font-bold text-white animate-pulse">🔥 DEUCE 🔥</h2>
-    <h2 v-if="gameState === 'win'" class="text-6xl font-bold text-red-500 animate-pulse uppercase mb-4">{{winnerName}} WINS!</h2>
+    <h2 v-if="gameState === 'deuce'" class="text-6xl font-bold text-white animate-pulse uppercase mb-4">🔥 DEUCE 🔥</h2>
+    <h2 v-if="gameState === 'win'" class="text-6xl font-bold text-green-500 animate-pulse uppercase mb-4">{{winnerName}} WINS!</h2>
 
     <div class="flex justify-center w-full h-3/4 items-center gap-20">
       <!-- Player 1 -->
-      <div class="text-center flex flex-col items-center w-1/3 p-6 rounded-xl bg-gray-800" :class="{ 'border-8 border-yellow-500 shadow-xl': server === 1, 'border-8 border-red-500 shadow-xl': winnerName === player1Name }">
+      <div class="text-center flex flex-col items-center w-1/3 p-6 rounded-xl bg-gray-800" :class="{ 'border-8 border-yellow-500 shadow-xl': server === 1, 'border-8 border-green-500 shadow-xl': winnerName === player1Name }">
         <h2 class="text-4xl font-semibold">{{ player1Name }}</h2>
         <p class="text-[12rem] font-bold my-6">{{ scorePlayer1 }}</p>
         <div class="flex gap-4">
@@ -49,7 +49,7 @@
       </div>
 
       <!-- Player 2 -->
-      <div class="text-center flex flex-col items-center w-1/3 p-6 rounded-xl bg-gray-800" :class="{ 'border-8 border-yellow-500 shadow-xl': server === 2, 'border-8 border-red-500 shadow-xl': winnerName === player2Name }">
+      <div class="text-center flex flex-col items-center w-1/3 p-6 rounded-xl bg-gray-800" :class="{ 'border-8 border-yellow-500 shadow-xl': server === 2, 'border-8 border-green-500 shadow-xl': winnerName === player2Name }">
         <h2 class="text-4xl font-semibold">{{ player2Name }}</h2>
         <p class="text-[12rem] font-bold my-6">{{ scorePlayer2 }}</p>
         <div class="flex gap-4">
@@ -77,6 +77,7 @@
 
 <script>
 import io from 'socket.io-client';
+import confetti from "canvas-confetti"; // Import confetti
 
 export default {
   data() {
@@ -137,10 +138,12 @@ export default {
   computed: {
     winnerName() {
         if (this.gameState === "win") {
-          return this.scorePlayer1 > this.scorePlayer2 ? this.player1Name : this.player2Name;
+          const winner = this.scorePlayer1 > this.scorePlayer2 ? this.player1Name : this.player2Name;
+          this.triggerConfetti(winner === this.player1Name ? "left" : "right");
+          return winner
         }
         return "";
-      }
+      },
   },
 
   methods: {
@@ -165,6 +168,15 @@ export default {
 
     clearNames() {
       this.socket.emit('clear_names');
+    },
+
+    triggerConfetti(side) {
+      const xPosition = side === "left" ? 0.3 : 0.7; // Left = 20%, Right = 80%
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { x: xPosition, y: 0.5 }, // Adjust x for left/right side
+      });
     },
 
     updateWinningScore() {
