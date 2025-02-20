@@ -49,7 +49,7 @@
       </div>
 
       <!-- Player 2 -->
-      <div class="text-center flex flex-col items-center w-1/3 p-6 rounded-xl bg-gray-800" :class="{ 'border-8 border-yellow-500 shadow-xl': server === 2  }">
+      <div class="text-center flex flex-col items-center w-1/3 p-6 rounded-xl bg-gray-800" :class="{ 'border-8 border-yellow-500 shadow-xl': server === 2, 'border-8 border-red-500 shadow-xl': winnerName === player2Name }">
         <h2 class="text-4xl font-semibold">{{ player2Name }}</h2>
         <p class="text-[12rem] font-bold my-6">{{ scorePlayer2 }}</p>
         <div class="flex gap-4">
@@ -125,7 +125,6 @@ export default {
       this.gameState = data.gameState;
       this.serviceInterval = data.serviceInterval;
       this.winningScore = data.winningScore;
-      this.serviceInterval = data.serviceInterval;
     });
 
 

@@ -106,7 +106,8 @@ def handle_increment(data):
 
     emit('game_state_update', {
         'gameState': game_state,
-        'serviceInterval': service_interval
+        'serviceInterval': service_interval,
+        'winningScore': winning_score,
     }, broadcast=True)
 
 @socketio.on('decrement_score')
@@ -131,7 +132,8 @@ def handle_decrement(data):
 
     emit('game_state_update', {
         'gameState': game_state,
-        'serviceInterval': service_interval
+        'serviceInterval': service_interval,
+        'winningScore': winning_score,
     }, broadcast=True)
 
 @socketio.on('clear_score')
@@ -148,7 +150,8 @@ def handle_clear_score():
 
     emit('game_state_update', {
         'gameState': game_state,
-        'serviceInterval': service_interval
+        'serviceInterval': service_interval,
+        'winningScore': winning_score,
     }, broadcast=True)
 
 @socketio.on('clear_names')
