@@ -2,6 +2,20 @@
   <div id="app" class="bg-gray-900 text-white flex flex-col items-center justify-center min-h-screen py-10 w-screen">
     <h1 class="text-6xl font-bold mb-6">🏓 Ping Pong Scoreboard</h1>
 
+    <!-- Game Settings -->
+    <div class="mb-4 flex gap-4 text-2xl">
+      <span>Winning Score:</span>
+      <input type="number" v-model="winningScore" @change="updateWinningScore" min="1"
+            class="px-4 py-2 bg-gray-700 text-white rounded-lg w-20">
+    </div>
+
+    <div class="mb-4 flex gap-4 text-2xl">
+      <span>Service Interval:</span>
+      <input type="number" v-model="serviceInterval" @change="updateServiceInterval" min="1"
+            class="px-4 py-2 bg-gray-700 text-white rounded-lg w-20">
+    </div>
+
+
     <!-- Pick player names -->
     <div class="mb-4 flex gap-4 text-2xl">
       <span>Player Names:</span>
@@ -18,9 +32,12 @@
       </select>
     </div>
 
+    <h2 v-if="gameState === 'deuce'" class="text-6xl font-bold text-white animate-pulse">🔥 DEUCE 🔥</h2>
+    <h2 v-if="gameState === 'win'" class="text-6xl font-bold text-red-500 animate-pulse uppercase mb-4">{{winnerName}} WINS!</h2>
+
     <div class="flex justify-center w-full h-3/4 items-center gap-20">
       <!-- Player 1 -->
-      <div class="text-center flex flex-col items-center w-1/3 p-6 rounded-xl bg-gray-800" :class="{ 'border-8 border-yellow-500 shadow-xl': server === 1  }">
+      <div class="text-center flex flex-col items-center w-1/3 p-6 rounded-xl bg-gray-800" :class="{ 'border-8 border-yellow-500 shadow-xl': server === 1, 'border-8 border-red-500 shadow-xl': winnerName === player1Name }">
         <h2 class="text-4xl font-semibold">{{ player1Name }}</h2>
         <p class="text-[12rem] font-bold my-6">{{ scorePlayer1 }}</p>
         <div class="flex gap-4">
@@ -32,7 +49,7 @@
       </div>
 
       <!-- Player 2 -->
-      <div class="text-center flex flex-col items-center w-1/3 p-6 rounded-xl bg-gray-800" :class="{ 'border-8 border-yellow-500 shadow-xl': server === 2  }">
+      <div class="text-center flex flex-col items-center w-1/3 p-6 rounded-xl bg-gray-800" :class="{ 'border-8 border-yellow-500 shadow-xl': server === 2, 'border-8 border-red-500 shadow-xl': winnerName === player2Name }">
         <h2 class="text-4xl font-semibold">{{ player2Name }}</h2>
         <p class="text-[12rem] font-bold my-6">{{ scorePlayer2 }}</p>
         <div class="flex gap-4">
@@ -71,9 +88,11 @@ export default {
       scorePlayer2: 0,
       server: 1,  // Track the current server
       selectedServer: 1,  // Default selected server
-      beepSound: new Audio('/beep.wav')  // Load the beep sound
-
-
+      beepSound: new Audio('/beep.wav'),  // Load the beep sound
+      gameState: "active",
+      winningScore: 21,
+      gamePoint: this.winningScore - 1,
+      serviceInterval: 5,
     };
   },
   created() {
@@ -102,7 +121,28 @@ export default {
       }
     });
 
+    this.socket.on("game_state_update", (data) => {
+      this.gameState = data.gameState;
+      this.serviceInterval = data.serviceInterval;
+      this.winningScore = data.winningScore;
+
+      // Only override serviceInterval if the game is in deuce
+      if (this.gameState === "deuce") {
+        this.serviceInterval = data.serviceInterval;
+      }
+    });
+
+
   },
+  computed: {
+    winnerName() {
+        if (this.gameState === "win") {
+          return this.scorePlayer1 > this.scorePlayer2 ? this.player1Name : this.player2Name;
+        }
+        return "";
+      }
+  },
+
   methods: {
     setInitialServer() {
       this.socket.emit('set_server', { player: this.selectedServer });
@@ -125,6 +165,14 @@ export default {
 
     clearNames() {
       this.socket.emit('clear_names');
+    },
+
+    updateWinningScore() {
+      this.socket.emit('update_winning_score', { winningScore: this.winningScore });
+    },
+
+    updateServiceInterval() {
+      this.socket.emit('update_service_interval', { serviceInterval: this.serviceInterval });
     },
 
     playBeep() {
