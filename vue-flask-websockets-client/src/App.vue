@@ -19,11 +19,11 @@
     </div>
 
     <h2 v-if="gameState === 'deuce'" class="text-6xl font-bold text-white animate-pulse">🔥 DEUCE 🔥</h2>
-    <h2 v-if="gameState === 'win'" class="text-6xl font-bold text-white animate-pulse uppercase">{{winnerName}} WINS!</h2>
+    <h2 v-if="gameState === 'win'" class="text-6xl font-bold text-red-500 animate-pulse uppercase mb-4">{{winnerName}} WINS!</h2>
 
     <div class="flex justify-center w-full h-3/4 items-center gap-20">
       <!-- Player 1 -->
-      <div class="text-center flex flex-col items-center w-1/3 p-6 rounded-xl bg-gray-800" :class="{ 'border-8 border-yellow-500 shadow-xl': server === 1  }">
+      <div class="text-center flex flex-col items-center w-1/3 p-6 rounded-xl bg-gray-800" :class="{ 'border-8 border-yellow-500 shadow-xl': server === 1, 'border-8 border-red-500 shadow-xl': winnerName === player1Name }">
         <h2 class="text-4xl font-semibold">{{ player1Name }}</h2>
         <p class="text-[12rem] font-bold my-6">{{ scorePlayer1 }}</p>
         <div class="flex gap-4">
