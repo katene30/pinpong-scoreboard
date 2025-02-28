@@ -177,6 +177,16 @@ def update_service_interval(data):
     service_interval = data['serviceInterval']
     socketio.emit('game_state_update', {'winningScore': winning_score, 'serviceInterval': service_interval, 'gameState': game_state})
 
+@socketio.on('switch_names')
+def switch_names(data):
+    global player_names
+    player_names[1], player_names[2] = player_names[2], player_names[1]
+
+    emit('name_update', {
+        "player1": player_names[1],
+        "player2": player_names[2]
+    }, broadcast=True)
+
 
 if __name__ == '__main__':
     socketio.run(app, host='0.0.0.0', port=5000, debug=True)

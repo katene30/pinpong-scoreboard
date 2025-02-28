@@ -48,6 +48,12 @@
         </div>
       </div>
 
+      <!-- Switch Sides Button -->
+      <button @click="switchSides"
+              class="bg-blue-500 hover:bg-blue-600 px-6 py-4 rounded-full text-2xl font-bold flex items-center gap-2">
+          <img src="./assets/swap.png" alt="Switch Sides" class="w-12 h-12">
+      </button>
+
       <!-- Player 2 -->
       <div class="text-center flex flex-col items-center w-1/3 p-6 rounded-xl bg-gray-800" :class="{ 'border-8 border-yellow-500 shadow-xl': server === 2, 'border-8 border-green-500 shadow-xl': winnerName === player2Name }">
         <h2 class="text-4xl font-semibold">{{ player2Name }}</h2>
@@ -168,6 +174,15 @@ export default {
 
     clearNames() {
       this.socket.emit('clear_names');
+    },
+
+    switchSides() {
+      [this.player1Name, this.player2Name] = [this.player2Name, this.player1Name];
+
+      this.socket.emit('switch_names', {
+        player1: this.player1Name,
+        player2: this.player2Name
+      });
     },
 
     triggerConfetti(side) {
