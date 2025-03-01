@@ -51,8 +51,8 @@
         <h2 class="text-4xl font-semibold">{{ player1Name }}</h2>
         <p class="text-[12rem] font-bold my-6">{{ scorePlayer1 }}</p>
         <div class="flex gap-4">
-          <button @click="incrementScorePlayer1" class="px-10 py-6 bg-green-500 hover:bg-green-600 rounded-lg text-4xl font-semibold">+1</button>
-          <button @click="decrementScorePlayer1" class="px-10 py-6 bg-red-500 hover:bg-red-600 rounded-lg text-4xl font-semibold">-1</button>
+          <button @click="incrementScorePlayer1" class="px-10 py-6 bg-green-500 hover:bg-green-600 rounded-lg text-4xl font-semibold"><PhPlus :size="64" /></button>
+          <button @click="decrementScorePlayer1" class="px-10 py-6 bg-red-500 hover:bg-red-600 rounded-lg text-4xl font-semibold"><PhMinus :size="64" /></button>
         </div>
       </div>
       
@@ -93,9 +93,9 @@
         <p class="text-[12rem] font-bold my-6">{{ scorePlayer2 }}</p>
         <div class="flex gap-4">
           <button @click="incrementScorePlayer2"
-                  class="px-10 py-6 bg-green-500 hover:bg-green-600 rounded-lg text-4xl font-semibold">+1</button>
+                  class="px-10 py-6 bg-green-500 hover:bg-green-600 rounded-lg text-4xl font-semibold"><PhPlus :size="64" /></button>
           <button @click="decrementScorePlayer2"
-                  class="px-10 py-6 bg-red-500 hover:bg-red-600 rounded-lg text-4xl font-semibold">-1</button>
+                  class="px-10 py-6 bg-red-500 hover:bg-red-600 rounded-lg text-4xl font-semibold"><PhMinusgit :size="64" /></button>
         </div>
       </div>
     </div>
@@ -117,7 +117,7 @@
 <script>
 import io from 'socket.io-client';
 import confetti from "canvas-confetti"; // Import confetti
-import { PhPingPong, PhArrowCounterClockwise, PhGear } from "@phosphor-icons/vue";
+import { PhPingPong, PhArrowCounterClockwise, PhGear, PhPlus, PhMinus, } from "@phosphor-icons/vue";
 
 export default {
   name: 'App',
@@ -125,6 +125,8 @@ export default {
     PhPingPong,
     PhArrowCounterClockwise,
     PhGear,
+    PhPlus,
+    PhMinus,
   },
   data() {
     return {
