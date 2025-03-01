@@ -65,11 +65,11 @@
         
         <!-- Swap Service Button -->
         <button @click="swapService"
-        class="bg-purple-500 hover:bg-purple-600 px-6 py-4 rounded-full text-2xl font-bold flex items-center gap-3">
+        class="bg-yellow-500 hover:bg-yellow-600 px-6 py-4 rounded-full text-2xl font-bold flex items-center gap-3">
         <!-- Icon in Circle -->
         <div class="bg-white rounded-full p-2 flex items-center justify-center w-16 h-16">
-          <PhPingPong :size="64" color="#6B46C1" weight="fill" />
-          <PhArrowCounterClockwise :size="38" color="#6B46C1" weight="fill" />
+          <PhPingPong :size="64" color="#F59E0B" weight="fill" />
+          <PhArrowCounterClockwise :size="38" color="#F59E0B" weight="fill" />
         </div>
         <!-- Button Text -->
             <span class="text-white">Swap Service</span>
