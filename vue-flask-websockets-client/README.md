@@ -16,6 +16,10 @@ Build for production:
 `npm run build`
 
 ### Backend Setup (Flask Server)
+Install dependencies:
+
+`pip3 install -r requirements.txt`
+
 Run the Flask WebSocket server:
 
 `python app.py`
