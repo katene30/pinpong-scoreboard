@@ -100,17 +100,17 @@
       </div>
     </div>
 
-    <!-- Clear Scores Button -->
-    <div class="mt-8 text-4xl font-semibold">
-      <button @click="clearScore"
-              class="px-12 py-6 bg-yellow-500 hover:bg-yellow-600 text-4xl font-bold rounded-lg">Clear Scores</button>
+    <!-- Clear Scores and Clear Names Buttons (Side by Side) -->
+    <div class="mt-8 text-4xl font-semibold flex gap-4 justify-center flex-wrap">
+      <button @click="clearScore" class="px-12 py-6 bg-red-500 hover:bg-red-600 text-4xl font-bold rounded-lg w-full sm:w-auto">
+        Clear Scores
+      </button>
+
+      <button @click="clearNames" class="px-12 py-6 bg-red-500 hover:bg-red-600 text-4xl font-bold rounded-lg w-full sm:w-auto">
+        Clear Names
+      </button>
     </div>
 
-    <!--  Button -->
-    <div class="mt-8 text-4xl font-semibold">
-      <button @click="clearNames"
-              class="px-12 py-6 bg-yellow-500 hover:bg-yellow-600 text-4xl font-bold rounded-lg">Clear Names</button>
-    </div>
   </div>
 </template>
 
