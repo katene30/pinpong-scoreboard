@@ -2,16 +2,37 @@
   <div id="app" class="bg-gray-900 text-white flex flex-col items-center justify-center min-h-screen py-10 w-screen">
     <h1 class="text-6xl font-bold mb-6">🏓 Ping Pong Scoreboard</h1>
 
-    <!-- Game Settings -->
-    <div class="mb-4 flex gap-4 text-2xl">
-      <span>Winning Score:</span>
-      <input type="number" v-model="winningScore" @change="updateWinningScore" min="1" class="px-4 py-2 bg-gray-700 text-white rounded-lg w-20">
+    <!-- Cog Icon Button in the Top Right -->
+    <div class="absolute top-5 right-5">
+      <button @click="openSettings" class="bg-gray-700 hover:bg-gray-600 p-3 rounded-full shadow-md text-white focus:outline-none">
+        <PhGear :size="32" color="white" weight="fill" />
+      </button>
     </div>
-    
-    <div class="mb-4 flex gap-4 text-2xl">
-      <span>Service Interval:</span>
-      <input type="number" v-model="serviceInterval" @change="updateServiceInterval" min="1" class="px-4 py-2 bg-gray-700 text-white rounded-lg w-20">
+
+    <!-- Modal for Settings -->
+    <div v-if="showSettings" @click.self="closeSettings" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+      <div class="bg-gray-900 p-8 rounded-lg w-96 shadow-xl relative">
+        <!-- Close "X" Button -->
+        <button @click="closeSettings" class="absolute top-2 right-2 bg-gray-800 hover:bg-gray-700 text-white rounded-full p-2">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+        
+        <h2 class="text-2xl font-semibold text-white mb-4">Game Settings</h2>
+        
+        <div class="mb-4 flex gap-4 text-xl text-white">
+          <span>Winning Score:</span>
+          <input type="number" v-model="winningScore" @change="updateWinningScore" min="1" class="px-4 py-2 bg-gray-700 text-white rounded-lg w-20">
+        </div>
+        
+        <div class="mb-4 flex gap-4 text-xl text-white">
+          <span>Service Interval:</span>
+          <input type="number" v-model="serviceInterval" @change="updateServiceInterval" min="1" class="px-4 py-2 bg-gray-700 text-white rounded-lg w-20">
+        </div>
+      </div>
     </div>
+
     
     
     <!-- Pick player names -->
@@ -96,13 +117,14 @@
 <script>
 import io from 'socket.io-client';
 import confetti from "canvas-confetti"; // Import confetti
-import { PhPingPong, PhArrowCounterClockwise } from "@phosphor-icons/vue";
+import { PhPingPong, PhArrowCounterClockwise, PhGear } from "@phosphor-icons/vue";
 
 export default {
   name: 'App',
   components: {
     PhPingPong,
     PhArrowCounterClockwise,
+    PhGear,
   },
   data() {
     return {
@@ -111,13 +133,14 @@ export default {
       player2Name: "Player 2",
       scorePlayer1: 0,
       scorePlayer2: 0,
-      server: 1,  // Track the current server
-      selectedServer: 1,  // Default selected server
-      beepSound: new Audio('/beep.wav'),  // Load the beep sound
+      server: 1,
+      selectedServer: 1,
+      beepSound: new Audio('/beep.wav'),
       gameState: "active",
       winningScore: 21,
       gamePoint: this.winningScore - 1,
       serviceInterval: 5,
+      showSettings: false,
     };
   },
   created() {
@@ -212,6 +235,14 @@ export default {
         origin: { x: xPosition, y: 0.5 }, // Adjust x for left/right side
       });
     },
+
+  openSettings() {
+    this.showSettings = true;
+  },
+
+  closeSettings() {
+    this.showSettings = false;
+  },
 
     updateWinningScore() {
       this.socket.emit('update_winning_score', { winningScore: this.winningScore });
