@@ -50,8 +50,17 @@
 
       <!-- Switch Sides Button -->
       <button @click="switchSides"
-              class="bg-blue-500 hover:bg-blue-600 px-6 py-4 rounded-full text-2xl font-bold flex items-center gap-2">
-          <img src="./assets/swap.png" alt="Switch Sides" class="w-12 h-12">
+              class="bg-blue-500 hover:bg-blue-600 px-6 py-4 rounded-full text-2xl font-bold flex items-center gap-3">
+          <!-- Icon in Circle -->
+           
+          <div class="bg-white rounded-full p-2 flex items-center justify-center w-12 h-12">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8 text-blue-500">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
+            </svg>
+          </div>
+          
+          <!-- Button Text -->
+          <span class="text-white">Switch Sides</span>
       </button>
 
       <!-- Player 2 -->
