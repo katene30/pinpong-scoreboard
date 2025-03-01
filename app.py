@@ -56,7 +56,7 @@ def update_names(data):
 def set_server(data):
     """ Manually set who starts serving """
     global current_server
-    current_server = data.get('player', 1)  # Default to Player 1
+    current_server = data['player']
     emit('score_update', {'player_1': score_player_1, 'player_2': score_player_2, 'server': current_server}, broadcast=True)
 
 def update_game_state():

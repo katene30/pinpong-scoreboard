@@ -5,63 +5,66 @@
     <!-- Game Settings -->
     <div class="mb-4 flex gap-4 text-2xl">
       <span>Winning Score:</span>
-      <input type="number" v-model="winningScore" @change="updateWinningScore" min="1"
-            class="px-4 py-2 bg-gray-700 text-white rounded-lg w-20">
+      <input type="number" v-model="winningScore" @change="updateWinningScore" min="1" class="px-4 py-2 bg-gray-700 text-white rounded-lg w-20">
     </div>
-
+    
     <div class="mb-4 flex gap-4 text-2xl">
       <span>Service Interval:</span>
-      <input type="number" v-model="serviceInterval" @change="updateServiceInterval" min="1"
-            class="px-4 py-2 bg-gray-700 text-white rounded-lg w-20">
+      <input type="number" v-model="serviceInterval" @change="updateServiceInterval" min="1" class="px-4 py-2 bg-gray-700 text-white rounded-lg w-20">
     </div>
-
-
+    
+    
     <!-- Pick player names -->
     <div class="mb-4 flex gap-4 text-2xl">
       <span>Player Names:</span>
       <input v-model="player1Name" placeholder="Enter Player 1 Name" class="px-4 py-2 bg-gray-700 text-white rounded-lg">
       <input v-model="player2Name" placeholder="Enter Player 2 Name" class="px-4 py-2 bg-gray-700 text-white rounded-lg">
     </div>
-
-    <!-- Pick Who Starts Serving -->
-    <div class="mb-4 flex gap-4 text-2xl">
-      <span>Who serves first?</span>
-      <select v-model="selectedServer" @change="setInitialServer" class="px-4 py-2 bg-gray-700 text-white rounded-lg">
-        <option :value="1">{{ player1Name }}</option>
-        <option :value="2">{{ player2Name }}</option>
-      </select>
-    </div>
-
+    
     <h2 v-if="gameState === 'deuce'" class="text-6xl font-bold text-white animate-pulse uppercase mb-4">🔥 DEUCE 🔥</h2>
     <h2 v-if="gameState === 'win'" class="text-6xl font-bold text-green-500 animate-pulse uppercase mb-4">{{winnerName}} WINS!</h2>
-
+    
     <div class="flex justify-center w-full h-3/4 items-center gap-20">
       <!-- Player 1 -->
       <div class="text-center flex flex-col items-center w-1/3 p-6 rounded-xl bg-gray-800" :class="{ 'border-8 border-yellow-500 shadow-xl': server === 1, 'border-8 border-green-500 shadow-xl': winnerName === player1Name }">
         <h2 class="text-4xl font-semibold">{{ player1Name }}</h2>
         <p class="text-[12rem] font-bold my-6">{{ scorePlayer1 }}</p>
         <div class="flex gap-4">
-          <button @click="incrementScorePlayer1"
-                  class="px-10 py-6 bg-green-500 hover:bg-green-600 rounded-lg text-4xl font-semibold">+1</button>
-          <button @click="decrementScorePlayer1"
-                  class="px-10 py-6 bg-red-500 hover:bg-red-600 rounded-lg text-4xl font-semibold">-1</button>
+          <button @click="incrementScorePlayer1" class="px-10 py-6 bg-green-500 hover:bg-green-600 rounded-lg text-4xl font-semibold">+1</button>
+          <button @click="decrementScorePlayer1" class="px-10 py-6 bg-red-500 hover:bg-red-600 rounded-lg text-4xl font-semibold">-1</button>
         </div>
       </div>
+      
+      <div class="grid grid-rows-2 grid-flow-col gap-4">
+        
+        <!-- Swap Service Button -->
+        <button @click="swapService"
+        class="bg-purple-500 hover:bg-purple-600 px-6 py-4 rounded-full text-2xl font-bold flex items-center gap-3">
+        <!-- Icon in Circle -->
+        <div class="bg-white rounded-full p-2 flex items-center justify-center w-16 h-16">
+          <PhPingPong :size="64" color="#6B46C1" weight="fill" />
+          <PhArrowCounterClockwise :size="38" color="#6B46C1" weight="fill" />
+        </div>
+        <!-- Button Text -->
+            <span class="text-white">Swap Service</span>
+        </button>
 
-      <!-- Switch Sides Button -->
-      <button @click="switchSides"
-              class="bg-blue-500 hover:bg-blue-600 px-6 py-4 rounded-full text-2xl font-bold flex items-center gap-3">
-          <!-- Icon in Circle -->
-           
-          <div class="bg-white rounded-full p-2 flex items-center justify-center w-12 h-12">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8 text-blue-500">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
-            </svg>
-          </div>
-          
-          <!-- Button Text -->
-          <span class="text-white">Switch Sides</span>
-      </button>
+
+        <!-- Switch Sides Button -->
+        <button @click="switchSides"
+                class="bg-blue-500 hover:bg-blue-600 px-6 py-4 rounded-full text-2xl font-bold flex items-center gap-3">
+            <!-- Icon in Circle -->
+            
+            <div class="bg-white rounded-full p-2 flex items-center justify-center w-12 h-12">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8 text-blue-500">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
+              </svg>
+            </div>
+            
+            <!-- Button Text -->
+            <span class="text-white">Switch Sides</span>
+        </button>
+      </div>
 
       <!-- Player 2 -->
       <div class="text-center flex flex-col items-center w-1/3 p-6 rounded-xl bg-gray-800" :class="{ 'border-8 border-yellow-500 shadow-xl': server === 2, 'border-8 border-green-500 shadow-xl': winnerName === player2Name }">
@@ -93,8 +96,14 @@
 <script>
 import io from 'socket.io-client';
 import confetti from "canvas-confetti"; // Import confetti
+import { PhPingPong, PhArrowCounterClockwise } from "@phosphor-icons/vue";
 
 export default {
+  name: 'App',
+  components: {
+    PhPingPong,
+    PhArrowCounterClockwise,
+  },
   data() {
     return {
       socket: null,
@@ -162,8 +171,9 @@ export default {
   },
 
   methods: {
-    setInitialServer() {
-      this.socket.emit('set_server', { player: this.selectedServer });
+    swapService() {
+      this.server = this.server === 1 ? 2 : 1;
+      this.socket.emit('set_server', { player: this.server });
     },
     incrementScorePlayer1() {
       this.socket.emit('increment_score', { player: 1 });
