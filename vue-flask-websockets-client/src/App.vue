@@ -1,5 +1,5 @@
 <template>
-  <div id="app" class="bg-gray-900 text-white flex flex-col items-center justify-center min-h-screen py-10 w-screen">
+  <div id="app" class="bg-gray-900 text-white flex flex-col items-center justify-center min-h-screen py-10 max-w-full">
     <h1 class="text-6xl font-bold mb-6">🏓 Ping Pong Scoreboard</h1>
 
     <!-- Cog Icon Button in the Top Right -->
@@ -36,18 +36,21 @@
     
     
     <!-- Pick player names -->
-    <div class="mb-4 flex gap-4 text-2xl">
-      <span>Player Names:</span>
-      <input v-model="player1Name" placeholder="Enter Player 1 Name" class="px-4 py-2 bg-gray-700 text-white rounded-lg">
-      <input v-model="player2Name" placeholder="Enter Player 2 Name" class="px-4 py-2 bg-gray-700 text-white rounded-lg">
+    <div class="mb-4 flex flex-wrap gap-4 text-2xl items-center justify-center w-full px-4">
+      <span class="whitespace-nowrap">Player Names:</span>
+      <input v-model="player1Name" placeholder="Enter Player 1 Name"
+        class="px-4 py-2 bg-gray-700 text-white rounded-lg w-full sm:w-64 md:w-80 text-center">
+      <input v-model="player2Name" placeholder="Enter Player 2 Name"
+        class="px-4 py-2 bg-gray-700 text-white rounded-lg w-full sm:w-64 md:w-80 text-center">
     </div>
+
     
     <h2 v-if="gameState === 'deuce'" class="text-6xl font-bold text-white animate-pulse uppercase mb-4">🔥 DEUCE 🔥</h2>
     <h2 v-if="gameState === 'win'" class="text-6xl font-bold text-green-500 animate-pulse uppercase mb-4">{{winnerName}} WINS!</h2>
     
-    <div class="flex justify-center w-full h-3/4 items-center gap-20">
+    <div class="flex flex-col md:flex-row justify-center w-full h-auto items-center gap-6">
       <!-- Player 1 -->
-      <div class="text-center flex flex-col items-center w-1/3 p-6 rounded-xl bg-gray-800 relative" 
+      <div class="text-center flex flex-col items-center w-full md:w-1/3 p-6 rounded-xl bg-gray-800 relative" 
             :class="{
               'border-8 border-yellow-500 shadow-xl': server === 1, 
               'border-8 border-green-500 shadow-xl': winnerName === player1Name 
@@ -67,7 +70,7 @@
         </div>
       </div>
       
-      <div class="grid grid-rows-2 grid-flow-col gap-4">
+      <div class="flex-wrap grid grid-rows-2 grid-flow-col gap-4">
         
         <!-- Swap Service Button -->
         <button @click="swapService"
@@ -99,7 +102,7 @@
       </div>
 
       <!-- Player 2 -->
-      <div class="text-center flex flex-col items-center w-1/3 p-6 rounded-xl bg-gray-800 relative" 
+      <div class="text-center flex flex-col items-center w-full md:w-1/3 p-6 rounded-xl bg-gray-800 relative" 
             :class="{
               'border-8 border-yellow-500 shadow-xl': server === 2, 
               'border-8 border-green-500 shadow-xl': winnerName === player2Name 

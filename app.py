@@ -15,8 +15,6 @@ winning_score = 21
 game_point = winning_score - 1
 service_interval = 5
 
-
-
 current_server = 1
 
 player_names = {1: "Player 1", 2: "Player 2"}
@@ -142,6 +140,7 @@ def handle_clear_score():
     score_player_1 = 0  # Reset player 1's score
     score_player_2 = 0  # Reset player 2's score
     current_server = 1
+    service_interval = 5
 
     update_game_state()
 
