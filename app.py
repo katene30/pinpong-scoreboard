@@ -83,6 +83,8 @@ def handle_increment(data):
     global score_player_1, score_player_2, current_server, service_interval, game_state
     player = data.get('player')  # Expecting 'player' key to be sent with '1' or '2'
     
+    if game_state == 'win':
+        return
 
     if player == 1:
         score_player_1 += 1
