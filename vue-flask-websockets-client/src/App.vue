@@ -44,11 +44,18 @@
         class="px-4 py-2 bg-gray-700 text-white rounded-lg w-full sm:w-64 md:w-80 text-center">
     </div>
 
-    
-    <h2 v-if="gameState === 'deuce'" class="text-6xl font-bold text-white animate-pulse uppercase mb-4">🔥 DEUCE 🔥</h2>
-    <h2 v-if="gameState === 'win'" class="text-6xl font-bold text-green-500 animate-bounce uppercase mb-4">{{winnerName}} WINS!</h2>
-    <!-- Game Point Indicator -->
-    <h2 v-if="(scorePlayer1 === gamePoint || scorePlayer2 === gamePoint) && gameState !== 'win' && scorePlayer1 !== scorePlayer2" class="text-6xl font-bold text-blue-500 animate-pulse uppercase mb-4">GAME POINT</h2>
+    <div class="min-h-[100px] flex flex-col items-center justify-center space-y-4">
+      <h2 v-show="gameState === 'deuce'" class="text-6xl font-bold text-white animate-pulse uppercase mb-4">
+        🔥 DEUCE 🔥
+      </h2>
+      <h2 v-show="gameState === 'win'" class="text-6xl font-bold text-green-500 animate-bounce uppercase mb-4">
+        {{winnerName}} WINS!
+      </h2>
+      <h2 v-show="(scorePlayer1 === gamePoint || scorePlayer2 === gamePoint) && gameState !== 'win' && scorePlayer1 !== scorePlayer2"
+          class="text-6xl font-bold text-blue-500 animate-pulse uppercase mb-4">
+        GAME POINT
+      </h2>
+    </div>
 
     
     <div class="flex flex-col md:flex-row justify-center w-full h-auto items-center gap-6">
