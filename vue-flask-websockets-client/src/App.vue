@@ -57,7 +57,7 @@
               }">
         <div v-if="server === 1" class="absolute top-4 left-4 flex flex-col items-center space-y-1"
             :class="{
-              'server-pulse': isFinalServe,
+              'server-pulse': isFinalServe(),
             }">
           <PhPingPong :size="64" color="#F59E0B" weight="fill" />
         </div>
@@ -109,7 +109,7 @@
               }">
         <div v-if="server === 2" class="absolute top-4 left-4 flex flex-col items-center space-y-1"
             :class="{
-              'server-pulse': isFinalServe,
+              'server-pulse': isFinalServe(),
             }">
           <PhPingPong :size="64" color="#F59E0B" weight="fill" />
         </div>
@@ -162,8 +162,12 @@ export default {
       scorePlayer2: 0,
       server: 1,
       selectedServer: 1,
-      beepSound: new Audio('/beep.wav'),
-      finalBeepSound: new Audio('/final-serve.mp3'),
+      sounds: {
+        beep: new Audio('/beep.wav'),  // Player 1 scores
+        boop: new Audio('/boop.wav'),  // Player 2 scores
+        finalServe: new Audio('/final-serve.mp3'),
+        serviceChange: new Audio('/service-change.wav'),
+      },
       gameState: "active",
       winningScore: 21,
       gamePoint: this.winningScore - 1,
@@ -183,6 +187,9 @@ export default {
     
     // Listen for score updates from Flask server
     this.socket.on('score_update', (data) => {
+
+      const previousScorePlayer1 = this.scorePlayer1;
+      const previousScorePlayer2 = this.scorePlayer2;
       // Store the old server before updating
       const previousServer = this.server;  
 
@@ -191,14 +198,37 @@ export default {
       this.scorePlayer2 = data.player_2;
       this.server = data.server;
 
-      // Now compare previousServer with new server value
+      // Play service change sound
       if (previousServer !== data.server) {
-        this.playBeep();  // Play beep sound when service changes
+        this.playSound("serviceChange");
       }
 
-      if (this.isFinalServe){
-        this.playBeep();
+      
+      // Check if the score has incremented (for Player 1)
+      if (this.scorePlayer1 > previousScorePlayer1) {
+        // Only play beep sound if it's not a service change
+        if (previousServer === data.server) {
+          if (this.isFinalServe()) {
+            this.playSound("finalServe");
+          } else {
+            this.playSound("beep");  // Play beep sound for Player 1
+          }
+        }
       }
+
+      // Check if the score has incremented (for Player 2)
+      if (this.scorePlayer2 > previousScorePlayer2) {
+        // Only play boop sound if it's not a service change
+        if (previousServer === data.server) {
+          if (this.isFinalServe()) {
+            this.playSound("finalServe");
+          } else {
+            this.playSound("boop");  // Play boop sound for Player 2
+          }
+        }
+      }
+
+      
     });
 
     this.socket.on("game_state_update", (data) => {
@@ -215,10 +245,6 @@ export default {
 
   },
   computed: {
-    isFinalServe() {
-      const totalPoints = this.scorePlayer1 + this.scorePlayer2;
-      return (totalPoints + 1) % this.serviceInterval === 0;
-    },
     winnerName() {
         if (this.gameState === "win") {
           const winner = this.scorePlayer1 > this.scorePlayer2 ? this.player1Name : this.player2Name;
@@ -230,6 +256,10 @@ export default {
   },
 
   methods: {
+    isFinalServe() {
+      const totalPoints = this.scorePlayer1 + this.scorePlayer2;
+      return (totalPoints + 1) % this.serviceInterval === 0;
+    },
     swapService() {
       this.server = this.server === 1 ? 2 : 1;
       this.socket.emit('set_server', { player: this.server });
@@ -288,14 +318,14 @@ export default {
       this.socket.emit('update_service_interval', { serviceInterval: this.serviceInterval });
     },
 
-    playBeep() {
-      if (document.hidden) return; // Don't play if the tab is inactive
+    playSound(type) {
+      if (document.hidden) return; // Don't play if tab is inactive
 
-      const soundToPlay = this.isFinalServe ? this.finalBeepSound : this.beepSound;
-      
-      soundToPlay.currentTime = 0;
+      const sound = this.sounds[type];
+      if (!sound) return;
 
-      soundToPlay.play().catch((error) => {
+      sound.currentTime = 0; // Restart the sound
+      sound.play().catch((error) => {
         console.warn("Audio play blocked, waiting for user interaction", error);
         document.addEventListener("click", this.unlockAudio, { once: true });
         document.addEventListener("touchstart", this.unlockAudio, { once: true });
@@ -303,11 +333,12 @@ export default {
     },
 
     unlockAudio() {
-      this.beepSound.play().catch(() => {});
-      this.finalBeepSound.play().catch(() => {});
+      Object.values(this.sounds).forEach(sound => {
+        sound.play().catch(() => {});
+      });
       document.removeEventListener("click", this.unlockAudio);
       document.removeEventListener("touchstart", this.unlockAudio);
-    }
+    },
   },
   watch: {
     player1Name(newName, oldName) {
