@@ -46,15 +46,20 @@
 
     
     <h2 v-if="gameState === 'deuce'" class="text-6xl font-bold text-white animate-pulse uppercase mb-4">🔥 DEUCE 🔥</h2>
-    <h2 v-if="gameState === 'win'" class="text-6xl font-bold text-green-500 animate-pulse uppercase mb-4">{{winnerName}} WINS!</h2>
+    <h2 v-if="gameState === 'win'" class="text-6xl font-bold text-green-500 animate-bounce uppercase mb-4">{{winnerName}} WINS!</h2>
+    <!-- Game Point Indicator -->
+    <h2 v-if="(scorePlayer1 === gamePoint || scorePlayer2 === gamePoint) && gameState !== 'win' && scorePlayer1 !== scorePlayer2" class="text-6xl font-bold text-blue-500 animate-pulse uppercase mb-4">GAME POINT</h2>
+
     
     <div class="flex flex-col md:flex-row justify-center w-full h-auto items-center gap-6">
       <!-- Player 1 -->
-      <div class="text-center flex flex-col items-center w-full md:w-1/3 p-6 rounded-xl bg-gray-800 relative" 
+      <div class="text-center flex flex-col items-center w-full md:w-1/3 p-6 rounded-xl relative" 
             :class="{
               'border-8 border-yellow-500 shadow-xl': server === 1, 
-              'border-8 border-green-500 shadow-xl': winnerName === player1Name 
-              }">
+              'border-8 border-green-500 shadow-xl': winnerName === player1Name,
+              'bg-blue-600': scorePlayer1 === gamePoint && gameState !== 'win' && scorePlayer1 !== scorePlayer2,
+              'bg-gray-800': (scorePlayer1 !== gamePoint && gameState !== 'deuce') || gameState === 'deuce' || gameState === 'win', // Normal + Deuce
+            }">
         <div v-if="server === 1" class="absolute top-4 left-4 flex flex-col items-center space-y-1"
             :class="{
               'server-pulse': isFinalServe(),
@@ -102,10 +107,12 @@
       </div>
 
       <!-- Player 2 -->
-      <div class="text-center flex flex-col items-center w-full md:w-1/3 p-6 rounded-xl bg-gray-800 relative" 
+      <div class="text-center flex flex-col items-center w-full md:w-1/3 p-6 rounded-xl relative" 
             :class="{
               'border-8 border-yellow-500 shadow-xl': server === 2, 
-              'border-8 border-green-500 shadow-xl': winnerName === player2Name 
+              'border-8 border-green-500 shadow-xl': winnerName === player2Name,
+              'bg-blue-600': scorePlayer2 === gamePoint && gameState !== 'win' && scorePlayer1 !== scorePlayer2,
+              'bg-gray-800': (scorePlayer2 !== gamePoint && gameState !== 'deuce') || gameState === 'deuce' || gameState === 'win',
               }">
         <div v-if="server === 2" class="absolute top-4 left-4 flex flex-col items-center space-y-1"
             :class="{
@@ -170,7 +177,6 @@ export default {
       },
       gameState: "active",
       winningScore: 21,
-      gamePoint: this.winningScore - 1,
       serviceInterval: 5,
       showSettings: false,
     };
@@ -245,14 +251,21 @@ export default {
 
   },
   computed: {
+    gamePoint() {
+      // Return normal winning score unless in deuce
+      if (this.scorePlayer1 >= this.winningScore - 1 && this.scorePlayer2 >= this.winningScore - 1) {
+        return Math.max(this.scorePlayer1, this.scorePlayer2); // Dynamic game point (deuce)
+      }
+      return this.winningScore - 1;
+    },
     winnerName() {
-        if (this.gameState === "win") {
-          const winner = this.scorePlayer1 > this.scorePlayer2 ? this.player1Name : this.player2Name;
-          this.triggerConfetti(winner === this.player1Name ? "left" : "right");
-          return winner
-        }
-        return "";
-      },
+      if (this.gameState === "win") {
+        const winner = this.scorePlayer1 > this.scorePlayer2 ? this.player1Name : this.player2Name;
+        this.triggerConfetti(winner === this.player1Name ? "left" : "right");
+        return winner
+      }
+      return "";
+    },
   },
 
   methods: {
