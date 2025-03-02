@@ -115,10 +115,12 @@ def handle_decrement(data):
     global score_player_1, score_player_2, current_server
     player = data.get('player')  # Expecting 'player' key to be sent with '1' or '2'
 
-    if player == 1:
+    if player == 1 and score_player_1 > 0:
         score_player_1 -= 1
-    elif player == 2:
+    elif player == 2 and score_player_2 > 0:
         score_player_2 -= 1
+    else:
+        return
 
     total_score = score_player_1 + score_player_2
 
